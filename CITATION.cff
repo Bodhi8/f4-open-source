@@ -6,6 +6,7 @@ authors:
   - family-names: Curry
     given-names: Brian James
     affiliation: Vector1 Research
+repository-code: "https://github.com/Bodhi8/f4-open-source"
 version: 0.1.0
 date-released: 2026-11-01
 license: Apache-2.0

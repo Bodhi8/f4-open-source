@@ -11,11 +11,33 @@ requires-python = ">=3.11"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
 authors = [{name = "Vector1 Research LLC"}]
+keywords = ["fraud detection", "freight factoring", "risk", "decision analysis", "synthetic data"]
 dependencies = []
-classifiers = ["Development Status :: 3 - Alpha", "Programming Language :: Python :: 3", "Topic :: Scientific/Engineering"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Scientific/Engineering",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://vector1.ai"
+Repository = "https://github.com/Bodhi8/f4-open-source"
+Issues = "https://github.com/Bodhi8/f4-open-source/issues"
+Changelog = "https://github.com/Bodhi8/f4-open-source/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
-duckdb = ["duckdb>=1.1,<2"]
+# DuckDB imports pytz to return TIMESTAMPTZ columns as timezone-aware datetimes.
+duckdb = ["duckdb>=1.1,<2", "pytz"]
 dev = ["build>=1.2,<2", "ruff>=0.9,<1"]
 
 [project.scripts]

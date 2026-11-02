@@ -380,4 +380,7 @@ def validate_portfolio(tables: Mapping[str, list[Record]]) -> list[str]:
             if isinstance(row, AccountEvent) and row.event == "bank_change":
                 if row.target_id not in ids.get("BankAccount", set()):
                     errors.append(f"AccountEvent/{row.id}: missing bank target")
+                previous = row.previous_target_id
+                if previous and previous not in ids.get("BankAccount", set()):
+                    errors.append(f"AccountEvent/{row.id}: missing previous bank target")
     return errors

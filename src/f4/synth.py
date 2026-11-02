@@ -11,6 +11,7 @@ from pathlib import Path
 
 from .contracts import (
     ENTITIES,
+    SCHEMA_VERSION,
     AccountEvent,
     BankAccount,
     Carrier,
@@ -53,7 +54,7 @@ class Portfolio:
                 {
                     "synthetic": True,
                     "seed": self.seed,
-                    "schema_version": "1.0",
+                    "schema_version": SCHEMA_VERSION,
                     "tables": {k: len(v) for k, v in self.tables.items()},
                 },
                 indent=2,
@@ -111,20 +112,32 @@ def generate_portfolio(
                 days_to_pay=30 + i,
             )
         )
+    # Onboarding dates are drawn first so every account is first seen when the
+    # carrier that uses it joins. Ring carriers 0-3 share account b0; the final
+    # account appears only when carrier c4's bank details are taken over.
+    joined_at = [start - timedelta(days=rng.randint(60, 500)) for _ in range(carriers)]
+    takeover_at = start + timedelta(days=60)
+    restored_at = start + timedelta(days=91)
     for i in range(carriers + 1):
+        if i == carriers:
+            seen = takeover_at
+        elif i == 0:
+            seen = min(joined_at[:4])
+        else:
+            seen = joined_at[i]
         tables["BankAccount"].append(
             BankAccount(
                 id=f"b{i}",
                 account_hash=hashed(str(i), "bank"),
                 routing_hash=hashed("000000000", "routing"),
-                first_seen_at=start - timedelta(days=180),
-                last_seen_at=start - timedelta(days=180),
-                observed_at=start - timedelta(days=180),
-                verified=i % 3 != 0,
+                first_seen_at=seen,
+                last_seen_at=seen,
+                observed_at=seen,
+                verified=i % 3 != 0 and i != carriers,
             )
         )
     for i in range(carriers):
-        joined = start - timedelta(days=rng.randint(60, 500))
+        joined = joined_at[i]
         contact = hashed("ring-contact" if i < 4 else f"contact-{i}", "contact")
         tables["Carrier"].append(
             Carrier(
@@ -157,7 +170,6 @@ def generate_portfolio(
                 observed_at=joined,
             )
         )
-    takeover_at = start + timedelta(days=60)
     tables["AccountEvent"].append(
         AccountEvent(
             id="takeover-bank",
@@ -180,6 +192,19 @@ def generate_portfolio(
             observed_at=takeover_at,
         )
     )
+    # The legitimate owner restores the original account after the takeover window,
+    # so later clean payments to b4 agree with the account history.
+    tables["AccountEvent"].append(
+        AccountEvent(
+            id="takeover-restore",
+            carrier_id="c4",
+            event="bank_change",
+            target_id="b4",
+            previous_target_id=f"b{carriers}",
+            occurred_at=restored_at,
+            observed_at=restored_at,
+        )
+    )
     prior_duplicate: str | None = None
     for i in range(invoices):
         ci = i % carriers
@@ -194,7 +219,7 @@ def generate_portfolio(
         elif ci in (5, 6) and rng.random() < 0.6:
             scheme = "collusion"
         load_id = f"l{i}"
-        amount = round(rng.uniform(900, 7000) * (2 if scheme == "takeover" else 1), 2)
+        amount = round(rng.uniform(900, 7000), 2)
         if scheme == "takeover":
             amount = round(rng.uniform(12000, 18000), 2)
         if ci == 8 and prior_duplicate is not None:

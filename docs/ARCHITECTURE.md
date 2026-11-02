@@ -37,6 +37,5 @@ workflow.
 - [Python packaging guide](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/)
 - [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
-Domain design and equations follow the supplied F4 product specification dated
-October 31, 2026. The original internal specification is intentionally excluded
-from public release artifacts.
+Domain design and equations follow Vector1's F4 product specification. The
+internal specification is not part of this repository or its release artifacts.
