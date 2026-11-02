@@ -1,5 +1,7 @@
 # F4 · Freight Finance Fraud Framework
 
+[![Core tests and packages](https://github.com/Bodhi8/f4-open-source/actions/workflows/ci.yml/badge.svg)](https://github.com/Bodhi8/f4-open-source/actions/workflows/ci.yml)
+
 **A Python foundation for freight-finance risk research, by Vector1 Research.**
 
 F4 connects freight identities, transactions and outcomes to decisions expressed
@@ -26,21 +28,39 @@ f4 calculate --probability 0.10 --fee 100 --loss 1000 --catch-rate 0.8 --review-
 ```
 
 The calculator returns expected values of **−10 for fund, 60 for verify and −45
-for decline** under those supplied assumptions. These are expected dollars per
-case, not observed savings.
+for decline** under those supplied assumptions, plus the verification break-even
+probability. These are expected dollars per case, not observed savings.
+
+To install directly from GitHub instead:
+`python -m pip install "git+https://github.com/Bodhi8/f4-open-source"`.
+
+### Same score, different answer
+
+The verification threshold scales with the dollars at risk, so one score cutoff
+across a book is wrong for most invoices. With a 3% fee, a $25 call that catches
+90% of fraud and a $50 cost for declining a good invoice (illustrative values):
+
+```bash
+f4 calculate --probability 0.005 --amount 2500 --fee-rate 0.03 --catch-rate 0.9 --review-cost 25 --decline-cost 50
+f4 calculate --probability 0.005 --amount 10000 --fee-rate 0.03 --catch-rate 0.9 --review-cost 25 --decline-cost 50
+```
+
+At the same 0.5% fraud score, the right action is **fund** for the $2,500 invoice
+(verification pays above 1.15%) and **verify** for the $10,000 invoice (above
+0.29%). `examples/invoice_size.py` prints both. `--amount` with `--fee-rate`
+sets fee `m = f × A` and exposure `L = (1 − f) × A`; use `--fee` and `--loss`
+for other advance terms.
 
 ```python
-from f4 import Payoffs, expected_values, generate_portfolio
+from f4 import Payoffs, best_action, expected_values, generate_portfolio
 from f4.contracts import validate_portfolio
 
 portfolio = generate_portfolio(carriers=24, invoices=600, seed=42)
 assert validate_portfolio(portfolio.tables) == []
 
-values = expected_values(
-    0.10,
-    Payoffs(fee=100, loss=1000, catch_rate=0.8, review_cost=10, decline_cost=50),
-)
-print(max(values, key=values.get))  # verify
+payoff = Payoffs(fee=100, loss=1000, catch_rate=0.8, review_cost=10, decline_cost=50)
+print(expected_values(0.10, payoff))
+print(best_action(0.10, payoff))  # verify; exact ties resolve fund, verify, decline
 ```
 
 ## What is included
@@ -48,9 +68,9 @@ print(max(values, key=values.get))  # verify
 | Module | Public implementation |
 | --- | --- |
 | `contracts` | Twelve typed record types; UTC timestamps; schema, amount, propensity and reference checks; keyed identifier hashing |
-| `synth` | Seeded portfolios with rings, account takeovers, concentrated trade and duplicate billing, with delayed confirmations |
+| `synth` | Seeded portfolios with rings, account takeovers, concentrated trade and duplicate billing, with delayed confirmations; every reference is visible at the time it is used |
 | `features` | Reference degree and connected-component features |
-| `economics` | Fund/verify/decline expected values and verification break-even calculation |
+| `economics` | Fund/verify/decline expected values, best action, per-invoice payoffs and verification break-even |
 | `adapters` | JSONL, explicit source-column mapping and an optional DuckDB adapter |
 | `cli` | Synthetic-data generation and a command-line decision calculator |
 
@@ -95,6 +115,7 @@ generator uses a clearly synthetic deterministic key for reproducible fake data.
 
 ```bash
 python examples/quickstart.py
+python examples/invoice_size.py
 python -m unittest discover -s tests -v
 ```
 
@@ -106,6 +127,17 @@ example requires `python -m pip install '.[duckdb]'`.
 - [Development](CONTRIBUTING.md)
 - [Security](SECURITY.md)
 - [Release notes](CHANGELOG.md)
+
+## Commercial licensing and pilots
+
+The commercial F4 distribution installs inside a client's own cloud account and
+adds the modules listed above. For licensing, a diagnostic or a pilot on your
+own history, contact Vector1 Research at [vector1.ai](https://vector1.ai)
+(brian at vector1.ai).
+
+## Citation
+
+If you use F4 in research, cite it with the metadata in [CITATION.cff](CITATION.cff).
 
 ## License
 
