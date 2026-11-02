@@ -1,0 +1,26 @@
+name: Core tests and packages
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install '.[dev,duckdb]'
+      - run: python -m unittest discover -s tests -v
+      - run: ruff check .
+      - run: python scripts/check_public_release.py
+      - run: python examples/quickstart.py
+      - run: python examples/duckdb_demo.py
+      - run: python -m build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: core-packages-${{ matrix.python }}
+          path: dist/*

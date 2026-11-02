@@ -1,0 +1,675 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "F4 canonical data contract v1",
+  "$defs": {
+    "Carrier": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "legal_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "onboarded_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "usdot": {
+          "type": "string"
+        },
+        "mc_number": {
+          "type": "string"
+        },
+        "dba_name": {
+          "type": "string"
+        },
+        "address_hash": {
+          "type": "string"
+        },
+        "contact_hash": {
+          "type": "string"
+        },
+        "authority_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "observed_at",
+        "legal_name",
+        "onboarded_at"
+      ]
+    },
+    "Debtor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "identifier_hash": {
+          "type": "string"
+        },
+        "days_to_pay": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "id",
+        "observed_at",
+        "name"
+      ]
+    },
+    "Invoice": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "carrier_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "debtor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "load_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "type": "number",
+          "minimum": 0
+        },
+        "advance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "submitted_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "due_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "status": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "observed_at",
+        "carrier_id",
+        "debtor_id",
+        "load_id",
+        "amount",
+        "advance",
+        "submitted_at",
+        "due_at"
+      ]
+    },
+    "Load": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1
+        },
+        "origin": {
+          "type": "string",
+          "minLength": 1
+        },
+        "destination": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pickup_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "delivery_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "rate": {
+          "type": "number",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        }
+      },
+      "required": [
+        "id",
+        "observed_at",
+        "reference",
+        "origin",
+        "destination",
+        "pickup_at",
+        "delivery_at",
+        "rate"
+      ]
+    },
+    "Payment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "payer_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "payee_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "account_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "type": "number",
+          "minimum": 0
+        },
+        "paid_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "remittance_reference": {
+          "type": "string"
+        },
+        "invoice_id": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        }
+      },
+      "required": [
+        "id",
+        "observed_at",
+        "payer_id",
+        "payee_id",
+        "account_id",
+        "amount",
+        "paid_at"
+      ]
+    },
+    "BankAccount": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "account_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "routing_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "first_seen_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_seen_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "verified": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "observed_at",
+        "account_hash",
+        "routing_hash",
+        "first_seen_at",
+        "last_seen_at"
+      ]
+    },
+    "ContactPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "carrier_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value_hash": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "observed_at",
+        "carrier_id",
+        "kind",
+        "value_hash"
+      ]
+    },
+    "DeviceSession": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "carrier_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "device_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ip_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "event": {
+          "type": "string",
+          "minLength": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "observed_at",
+        "carrier_id",
+        "device_hash",
+        "ip_hash",
+        "event",
+        "occurred_at"
+      ]
+    },
+    "Document": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "carrier_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "extracted_fields": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "invoice_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "observed_at",
+        "carrier_id",
+        "kind",
+        "file_hash",
+        "extracted_fields"
+      ]
+    },
+    "AccountEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "carrier_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "event": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "previous_target_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "observed_at",
+        "carrier_id",
+        "event",
+        "target_id",
+        "occurred_at"
+      ]
+    },
+    "Outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "invoice_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "carrier_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "is_fraud": {
+          "type": "boolean"
+        },
+        "confirmed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "loss": {
+          "type": "number",
+          "minimum": 0
+        },
+        "recovery": {
+          "type": "number",
+          "minimum": 0
+        },
+        "scheme": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        }
+      },
+      "required": [
+        "id",
+        "observed_at",
+        "invoice_id",
+        "carrier_id",
+        "is_fraud",
+        "confirmed_at"
+      ]
+    },
+    "Decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "invoice_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fraud_probability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "propensity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "exclusiveMinimum": 0
+        },
+        "action_probabilities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "expected_values": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "reason_codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "model_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decided_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reviewer": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "observed_at",
+        "invoice_id",
+        "action",
+        "fraud_probability",
+        "propensity",
+        "action_probabilities",
+        "expected_values",
+        "reason_codes",
+        "model_version",
+        "policy_version",
+        "decided_at"
+      ]
+    }
+  },
+  "description": "Validate an entity against its named $defs schema. Cross-record and economic constraints are enforced by Python.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/Carrier"
+    },
+    {
+      "$ref": "#/$defs/Debtor"
+    },
+    {
+      "$ref": "#/$defs/Invoice"
+    },
+    {
+      "$ref": "#/$defs/Load"
+    },
+    {
+      "$ref": "#/$defs/Payment"
+    },
+    {
+      "$ref": "#/$defs/BankAccount"
+    },
+    {
+      "$ref": "#/$defs/ContactPoint"
+    },
+    {
+      "$ref": "#/$defs/DeviceSession"
+    },
+    {
+      "$ref": "#/$defs/Document"
+    },
+    {
+      "$ref": "#/$defs/AccountEvent"
+    },
+    {
+      "$ref": "#/$defs/Outcome"
+    },
+    {
+      "$ref": "#/$defs/Decision"
+    }
+  ]
+}

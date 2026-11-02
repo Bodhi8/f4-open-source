@@ -1,0 +1,5 @@
+# Tested local runtime pins (Python 3.12, Linux). Regenerate for other targets.
+-r requirements-build.lock
+ruff==0.9.10
+coverage==7.10.7
+duckdb==1.4.1

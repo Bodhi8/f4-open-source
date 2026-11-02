@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=77", "wheel>=0.45"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vector1-f4-core"
+version = "0.1.0"
+description = "F4 Freight Finance Fraud Framework: synthetic portfolios, contracts and reference economics"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{name = "Vector1 Research LLC"}]
+dependencies = []
+classifiers = ["Development Status :: 3 - Alpha", "Programming Language :: Python :: 3", "Topic :: Scientific/Engineering"]
+
+[project.optional-dependencies]
+duckdb = ["duckdb>=1.1,<2"]
+dev = ["build>=1.2,<2", "ruff>=0.9,<1"]
+
+[project.scripts]
+f4 = "f4.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+f4 = ["py.typed"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
