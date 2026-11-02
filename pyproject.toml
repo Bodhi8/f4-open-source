@@ -36,7 +36,8 @@ Issues = "https://github.com/Bodhi8/f4-open-source/issues"
 Changelog = "https://github.com/Bodhi8/f4-open-source/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
-duckdb = ["duckdb>=1.1,<2"]
+# DuckDB imports pytz to return TIMESTAMPTZ columns as timezone-aware datetimes.
+duckdb = ["duckdb>=1.1,<2", "pytz"]
 dev = ["build>=1.2,<2", "ruff>=0.9,<1"]
 
 [project.scripts]

@@ -8,6 +8,8 @@
 - Added a restore event after the synthetic account takeover, so later payments agree with
   the account history (26 account events instead of 25).
 - `validate_portfolio` now checks `previous_target_id` on bank changes.
+- The `duckdb` extra now installs `pytz`, which DuckDB needs to read timezone-aware
+  timestamp columns; `DuckDBAdapter.read` failed on typed tables without it.
 - Added `Payoffs.from_invoice`, `best_action` and `examples/invoice_size.py`, reproducing
   the published fund-versus-verify example for $2,500 and $10,000 invoices.
 - CLI: `--amount` with `--fee-rate`, verification break-even in the output, `--version`,
